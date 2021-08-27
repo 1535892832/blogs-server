@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.blogs.mapper.CommentMapper">
+    
+    <resultMap type="Comment" id="CommentResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="noteId"    column="note_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="content"    column="content"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delTime"    column="del_time"    />
+        <result property="delUserName"    column="del_user_name"    />
+        <result property="hasSensitiveWord"    column="has_sensitive_word"    />
+    </resultMap>
+
+    <sql id="selectCommentVo">
+        select id, user_id, user_name, note_id, parent_id, content, del_flag, create_time, del_time, del_user_name,has_sensitive_word from bs_comment
+    </sql>
+
+    <select id="selectCommentList" parameterType="Comment" resultMap="CommentResult">
+        <include refid="selectCommentVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="noteId != null  and noteId != ''"> and note_id = #{noteId}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+            <if test="hasSensitiveWord != null"> and has_sensitive_word = {hasSensitiveWord}</if>
+        </where>
+    </select>
+    
+    <select id="selectCommentById" parameterType="String" resultMap="CommentResult">
+        <include refid="selectCommentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertComment" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
+        insert into bs_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="noteId != null and noteId != ''">note_id,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="delTime != null">del_time,</if>
+            <if test="delUserName != null">del_user_name,</if>
+            <if test="hasSensitiveWord != null">has_sensitive_word,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="noteId != null and noteId != ''">#{noteId},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="delTime != null">#{delTime},</if>
+            <if test="delUserName != null">#{delUserName},</if>
+            <if test="hasSensitiveWord != null">#{hasSensitiveWord},</if>
+         </trim>
+    </insert>
+
+    <update id="updateComment" parameterType="Comment">
+        update bs_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="noteId != null and noteId != ''">note_id = #{noteId},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="delTime != null">del_time = #{delTime},</if>
+            <if test="delUserName != null">del_user_name = #{delUserName},</if>
+            <if test="hasSensitiveWord != null">has_sensitive_word = #{hasSensitiveWord},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCommentById" parameterType="String">
+        delete from bs_comment where id = #{id}
+    </delete>
+
+    <delete id="deleteCommentByIds" parameterType="String">
+        delete from bs_comment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

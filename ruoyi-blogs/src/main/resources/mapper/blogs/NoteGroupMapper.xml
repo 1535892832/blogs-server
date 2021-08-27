@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.blogs.mapper.NoteGroupMapper">
+    
+    <resultMap type="NoteGroup" id="NoteGroupResult">
+        <result property="groupId"    column="group_id"    />
+        <result property="groupName"    column="group_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="visible"    column="visible"    />
+        <result property="status"    column="status"    />
+        <result property="icon"    column="icon"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="mark"    column="mark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectNoteGroupVo">
+        select group_id, group_name, parent_id, order_num, visible, status, icon, create_by, mark, create_time, update_time from bs_note_group
+    </sql>
+
+    <select id="selectNoteGroupList" parameterType="NoteGroup" resultMap="NoteGroupResult">
+        <include refid="selectNoteGroupVo"/>
+        <where>
+        <if test="parentId != null and parentId != 0">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="groupName != null  and groupName != ''"> and group_name like concat('%', #{groupName}, '%')</if>
+        <if test="visible != null "> and visible = #{visible}</if>
+        <if test="status != null "> and status = #{status}</if>
+        <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+        </where>
+        order by parent_id,order_num
+    </select>
+    
+    <select id="selectNoteGroupById" parameterType="String" resultMap="NoteGroupResult">
+        <include refid="selectNoteGroupVo"/>
+        where group_id = #{groupId}
+    </select>
+        
+    <insert id="insertNoteGroup" parameterType="NoteGroup" useGeneratedKeys="true" keyProperty="groupId">
+        insert into bs_note_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupName != null and groupName != ''">group_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="visible != null">visible,</if>
+            <if test="status != null">status,</if>
+            <if test="icon != null">icon,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="mark != null">mark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupName != null and groupName != ''">#{groupName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="status != null">#{status},</if>
+            <if test="icon != null">#{icon},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNoteGroup" parameterType="NoteGroup">
+        update bs_note_group
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where group_id = #{groupId}
+    </update>
+
+    <delete id="deleteNoteGroupById" parameterType="String">
+        delete from bs_note_group where group_id = #{groupId}
+    </delete>
+
+    <delete id="deleteNoteGroupByIds" parameterType="String">
+        delete from bs_note_group where group_id in 
+        <foreach item="groupId" collection="array" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </delete>
+</mapper>

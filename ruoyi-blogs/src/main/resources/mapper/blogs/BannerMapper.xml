@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.blogs.mapper.BannerMapper">
+    
+    <resultMap type="Banner" id="BannerResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="isOutside"    column="is_outside"    />
+        <result property="outsideHref"    column="outside_href"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="visible"    column="visible"    />
+        <result property="userName"    column="user_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBannerVo">
+        select id, title, img_url, is_outside, outside_href, order_num, visible, user_name, user_id, create_time, update_time from bs_banner
+    </sql>
+
+    <select id="selectBannerList" parameterType="Banner" resultMap="BannerResult">
+        <include refid="selectBannerVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="isOutside != null "> and is_outside = #{isOutside}</if>
+            <if test="visible != null "> and visible = #{visible}</if>
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+        order by order_num,create_time
+    </select>
+    
+    <select id="selectBannerById" parameterType="String" resultMap="BannerResult">
+        <include refid="selectBannerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBanner" parameterType="Banner">
+        insert into bs_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url,</if>
+            <if test="isOutside != null">is_outside,</if>
+            <if test="outsideHref != null">outside_href,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="visible != null">visible,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="imgUrl != null and imgUrl != ''">#{imgUrl},</if>
+            <if test="isOutside != null">#{isOutside},</if>
+            <if test="outsideHref != null">#{outsideHref},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBanner" parameterType="Banner">
+        update bs_banner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url = #{imgUrl},</if>
+            <if test="isOutside != null">is_outside = #{isOutside},</if>
+            <if test="outsideHref != null">outside_href = #{outsideHref},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBannerById" parameterType="String">
+        delete from bs_banner where id = #{id}
+    </delete>
+
+    <delete id="deleteBannerByIds" parameterType="String">
+        delete from bs_banner where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
